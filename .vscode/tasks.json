@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "clang build test_integer",
+      "command": "/usr/bin/clang",
+      "args": [
+        "${workspaceFolder}/test_src/test_integer.c",
+        "-o",
+        "${workspaceFolder}/test_src/test_integer"
+      ],
+      "options": {
+        "cwd": "/usr/bin"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build"
+    }
+  ]
+}

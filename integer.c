@@ -255,14 +255,11 @@ Integer _add(Integer self, Integer i) {
     int sv = *so;
     int iv = *io;
     bool can_add = false;
-    if (sv >= 0) 
-      can_add = iv <= INT_MAX - sv;
-    else
-      can_add = iv >= INT_MIN - sv;
-    if (can_add)
-      r = newInteger(sv + iv);
-    else
-      errno = ERANGE;
+    if (sv >= 0) can_add = iv <= INT_MAX - sv;
+    else can_add = iv >= INT_MIN - sv; // FIXME: USE HELPER METHOD
+
+    if (can_add) r = newInteger(sv + iv);
+    else errno = ERANGE;
   }
   return r;
 }
@@ -280,15 +277,12 @@ Integer _subtract(Integer self, Integer i) {
   if (so && io) {
     int sv = *so;
     int iv = *io;
-    bool can_subtract = false;
-    if (sv >= 0) 
-      can_subtract = iv <= INT_MAX - sv;
-    else
-      can_subtract = iv >= INT_MIN - sv;
-    if (can_subtract)
-      r = newInteger(sv - iv);
-    else
-      errno = ERANGE;
+    bool can_subtract = true;
+    if ((iv < 0) && (sv > INT_MAX + iv)) can_subtract = false;
+    if ((iv > 0) && (sv < INT_MIN + iv)) can_subtract = false;
+
+    if (can_subtract) r = newInteger(sv - iv);
+    else errno = ERANGE;
   }
   return r;
 }
@@ -328,7 +322,18 @@ Integer _multiply(Integer self, Integer i) {
  * specification of this function
  */
 Integer _divide(Integer self, Integer i) {
-    return NULL;
+  int* so = (int*) get_mentry(_object_map, self);
+  int* io = (int*) get_mentry(_object_map, i);
+  Integer r = NULL;
+
+  if (so && io) {
+    int sv = *so;
+    int iv = *io;
+
+    if (_can_divide(sv, iv)) r = newInteger(sv / iv);
+    else errno = ERANGE;
+  }
+  return r;
 }
 
 /* 
@@ -337,7 +342,19 @@ Integer _divide(Integer self, Integer i) {
  * specification of this function
  */
 Integer _modulo(Integer self, Integer i) {
-    return NULL;
+  int* so = (int*) get_mentry(_object_map, self);
+  int* io = (int*) get_mentry(_object_map, i);
+  Integer r = NULL;
+
+  if (so && io) {
+    int sv = *so;
+    int iv = *io;
+
+    if ((iv == 0) || ((sv == INT_MIN) && iv == -1))
+      errno = ERANGE;
+    else r = newInteger(sv % iv);
+  }
+  return r;
 }
 
 /* _get_value: implemented, do NOT change */

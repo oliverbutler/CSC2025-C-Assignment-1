@@ -63,7 +63,6 @@ you invoke make, as follows:
 
 ------------------------------------------------------------------------------
 2. RUNNING TESTS AND INTERPRETING OUTPUT
-
 There are four test programs: 
     test_integer    - to run unit tests of the integer struct
     test_string     - to run unit tests of the string struct

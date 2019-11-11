@@ -1,6 +1,6 @@
 /*
  * Replace the following string of 0s with your student number
- * 000000000
+ * B8012181
  */
 #include <stdbool.h>
 #include <errno.h>
@@ -228,12 +228,25 @@ int fprintString(FILE* stream, const char* format, String s) {
 }
 
 /* 
- * TODO: IMPLEMENT _char_at
+ * TODO: IMPLEMENT _char_at NOTE: Use strn* not str* because safety of operations
  * see comments to the char_at member of struct string in string_o.h for the
  * specification of this function
  */
 char _char_at(String self, int posn) {
-    return 0;
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+  String r = 0;
+
+  if(sobj) {
+    char* str = sobj->val;
+    if (posn >= 0 && posn < sobj->len) {
+      r = str[posn];
+    } else if(sobj->len == 0 && posn == 0) {
+      r = 0;
+    } else {
+      errno = EINVAL;
+    }
+  }
+  return r;
 }
 
 /* 
@@ -242,7 +255,27 @@ char _char_at(String self, int posn) {
  * specification of this function
  */
 String _concat(String self, String s) {
-    return NULL;
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+  strobj* sobjsrc = (strobj*) get_mentry(_object_map, s);
+  String r = 0;
+  if (sobj && sobjsrc) {
+    char* concat = calloc(1, sobj->len + sobjsrc->len + 1); // malloc not work because random and overwriting shit
+
+    if(!concat) {
+      return NULL;
+    }
+
+    strncpy(concat, sobj->val, sobj->len);
+    strncat(concat, sobjsrc->val, sobj->len + sobjsrc->len + 1);
+
+    char temp[sobj->len + sobjsrc->len + 1];
+    strncpy(temp, concat, sobj->len + sobjsrc->len + 1);
+    free(concat);
+
+    r = newString((const char*)temp);
+  }
+  return r;
+
 }
 
 /* 

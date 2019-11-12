@@ -275,7 +275,6 @@ String _concat(String self, String s) {
     r = newString((const char*)temp);
   }
   return r;
-
 }
 
 /* 
@@ -284,6 +283,15 @@ String _concat(String self, String s) {
  * specification of this function
  */
 bool _equals(String self, String s) {
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+  strobj* sobj2 = (strobj*) get_mentry(_object_map, s);
+
+  if (!sobj || !sobj2)
+    return NULL;
+
+  if(strcmp(sobj->val, sobj2->val) == 0)
+    return true;
+  else
     return false;
 }
 
@@ -310,7 +318,16 @@ char* _get_value(String self, char* buf)  {
  * specification of this function
  */
 int _index_of(String self, char c, int start) {
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+  if(sobj && start >= 0 && start < sobj->len) {
+    for(int i = start; i < sobj->len + 1; i ++)
+      if(sobj->val[i] == c) 
+        return i;
+    return -1;
+  } else {
+    errno = EINVAL;
     return -2;
+  }
 }
 
 /* _length: implemented, do NOT change */

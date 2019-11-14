@@ -343,7 +343,35 @@ int _length(String self) {
  * specification of this function
  */
 String* _split(String self, String delim) {
-    return NULL;
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+  strobj* sobj_delim = (strobj*) get_mentry(_object_map, delim);
+
+  int number_splits = 1;
+  for(int i = 0; i < sobj->len; i++)
+    for(int j = 0; j < sobj_delim->len; j++)
+      if(sobj->val[i] == sobj_delim->val[j])
+        number_splits ++;
+
+  printf("\nnumber_splits: %d\nDelim: \"%s\"\nString: \"%s\"\n", number_splits, sobj_delim->val, sobj->val);
+
+  char* token;
+  String* splits;
+  splits = (String*) malloc(number_splits * sizeof(strobj)); //FIXME: Optimize
+
+  token = strtok(sobj->val, sobj_delim->val);
+  int i = 0;
+  for(i; i < number_splits; i++) {
+    printf("%d: %s\n", i, token);
+    if(token == NULL)
+      splits[i] = newString("");
+    else 
+      splits[i] = newString(token);
+    token = strtok(NULL, sobj_delim->val);
+  }
+  printf("%d: %s\n", i, token);
+  splits[i] = NULL;
+
+  return splits;
 }
 
 /* 

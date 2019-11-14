@@ -5,30 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "clang build and debug active file",
+      "name": "(lldb) Launch",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${fileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb",
-      "preLaunchTask": "clang build active file"
-    },
-    {
-      "name": "Test Integer",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/bin/test_integer",
+      "program": "${workspaceFolder}/a.out",
       "args": ["-a"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
-      "MIMode": "lldb",
-      // "preLaunchTask": "clang build test_integer"
+      "MIMode": "lldb"
     }
   ]
 }

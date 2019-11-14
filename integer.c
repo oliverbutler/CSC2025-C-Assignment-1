@@ -256,9 +256,9 @@ Integer _add(Integer self, Integer i) {
     int iv = *io;
     bool can_add = false;
     if (sv >= 0) can_add = iv <= INT_MAX - sv;
-    else can_add = iv >= INT_MIN - sv; // FIXME: USE HELPER METHOD
+    else can_add = iv >= INT_MIN - sv;
 
-    if (can_add) r = newInteger(sv + iv);
+    if (can_add) r = _add_vals(sv, iv);
     else errno = ERANGE;
   }
   return r;

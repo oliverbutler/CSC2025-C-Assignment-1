@@ -234,19 +234,19 @@ int fprintString(FILE* stream, const char* format, String s) {
  */
 char _char_at(String self, int posn) {
   strobj* sobj = (strobj*) get_mentry(_object_map, self);
-  String r = 0;
-
   if(sobj) {
     char* str = sobj->val;
     if (posn >= 0 && posn < sobj->len) {
-      r = str[posn];
+      return str[posn];
     } else if(sobj->len == 0 && posn == 0) {
-      r = 0;
+      return 0;
     } else {
       errno = EINVAL;
+      return 0;
     }
   }
-  return r;
+  errno = EINVAL;
+  return 0;
 }
 
 /* 
@@ -347,7 +347,7 @@ String* _split(String self, String delim) {
   strobj* sobj_delim = (strobj*) get_mentry(_object_map, delim);
 
   if(sobj && sobj_delim) {
-    String* splits = (String) malloc(sizeof(sobj));
+    String* splits = malloc(sizeof(sobj));
 
     char* string_val = _get_value(self, NULL);
 
@@ -355,7 +355,7 @@ String* _split(String self, String delim) {
     int i = 0;
     while((token = strsep(&string_val, sobj_delim->val)) != NULL)
       splits[i++] = newString(token);
-    splits[i] = '\0';
+    splits[i] = NULL;
     
     return splits;
 
@@ -371,7 +371,22 @@ String* _split(String self, String delim) {
  * specification of this function
  */
 String _substring(String self, int start, int length) {
+  strobj* sobj = (strobj*) get_mentry(_object_map, self);
+
+  if (sobj && start >= 0 && start <= sobj->len && length >= 0 && length <= sobj->len - start) {
+    char new_string[length+1];
+    int i = 0;
+    while(i < length) {
+      new_string[i] = sobj->val[start+i];
+      i++;
+    }
+    new_string[i] = '\0';
+
+    return newString(new_string);
+  } else {
+    errno = EINVAL;
     return NULL;
+  }
 }
 
 /*  

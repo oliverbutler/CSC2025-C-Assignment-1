@@ -346,32 +346,23 @@ String* _split(String self, String delim) {
   strobj* sobj = (strobj*) get_mentry(_object_map, self);
   strobj* sobj_delim = (strobj*) get_mentry(_object_map, delim);
 
-  int number_splits = 1;
-  for(int i = 0; i < sobj->len; i++)
-    for(int j = 0; j < sobj_delim->len; j++)
-      if(sobj->val[i] == sobj_delim->val[j])
-        number_splits ++;
+  if(sobj && sobj_delim) {
+    String* splits = (String) malloc(sizeof(sobj));
 
-  printf("\nnumber_splits: %d\nDelim: \"%s\"\nString: \"%s\"\n", number_splits, sobj_delim->val, sobj->val);
+    char* string_val = _get_value(self, NULL);
 
-  char* token;
-  String* splits;
-  splits = (String*) malloc(number_splits * sizeof(strobj)); //FIXME: Optimize
+    char* token;
+    int i = 0;
+    while((token = strsep(&string_val, sobj_delim->val)) != NULL)
+      splits[i++] = newString(token);
+    splits[i] = '\0';
+    
+    return splits;
 
-  token = strtok(sobj->val, sobj_delim->val);
-  int i = 0;
-  for(i; i < number_splits; i++) {
-    printf("%d: %s\n", i, token);
-    if(token == NULL)
-      splits[i] = newString("");
-    else 
-      splits[i] = newString(token);
-    token = strtok(NULL, sobj_delim->val);
+  } else {
+    errno = EINVAL;
+    return NULL;
   }
-  printf("%d: %s\n", i, token);
-  splits[i] = NULL;
-
-  return splits;
 }
 
 /* 

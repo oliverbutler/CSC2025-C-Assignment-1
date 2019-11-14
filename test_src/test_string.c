@@ -894,8 +894,7 @@ void assert_streqn(int test_case, int called_at, String act, int exp_len,
     String exp, int cmp_len) {
     assert_notnull_ca(test_case, __LINE__, called_at, act);
     assert_eq_ca(test_case, __LINE__, called_at, act->length(act), exp_len);
-    assert_eq_ca(test_case, __LINE__, called_at, strncmp(_test_string_val(act),
-        _test_string_val(exp), cmp_len), 0);
+    assert_eq_ca(test_case, __LINE__, called_at, strncmp(_test_string_val(act), _test_string_val(exp), cmp_len), 0);
 }
 
 void assert_newString(int test_case, int called_at, int len, char* buf) {
@@ -935,11 +934,11 @@ int norm_split_test(int test_case, int called_at, char* str2split, char* delim,
     assert(ds);
     
     String* splits = s2s->split(s2s, ds);
-    
+
     assert_notnull_ca(++test_case, __LINE__, called_at, splits);
     
     const char* s2sval = _test_string_val(s2s);
-    
+    // printf("s2sval: %s\n", s2sval);
     for (int i = 0; i < num_splits; i++) {
         String exp_s = newString(exp_splits[i]);
         assert(exp_s);
@@ -958,9 +957,9 @@ int norm_split_test(int test_case, int called_at, char* str2split, char* delim,
     }
 
     assert_null_ca(++test_case, __LINE__, called_at, splits[num_splits]);
-    // printf("%s %s %d\n", s2sval, str2split, strlen(str2split));
-    // assert_eq_ca(++test_case, __LINE__, called_at, 
-    //     strncmp(s2sval, str2split, strlen(str2split)), 0);
+     
+    assert_eq_ca(++test_case, __LINE__, called_at, 
+        strncmp(s2sval, str2split, strlen(str2split)), 0);
     assert_eq_ca(++test_case, __LINE__, called_at, 
         strncmp(_test_string_val(ds), delim, strlen(delim)), 0);
     

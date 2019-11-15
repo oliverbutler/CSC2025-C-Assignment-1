@@ -1,6 +1,6 @@
 /*
  * Replace the following string of 0s with your student number
- * b8012181
+ * B8012181
  */
 #include <stdbool.h>
 #include <errno.h>

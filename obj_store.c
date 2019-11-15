@@ -1,6 +1,6 @@
 /*
  * Replace the following string of 0s with your student number
- * 000000000
+ * B8012181
  */
 #include <stdio.h>
 #include <sys/stat.h>
@@ -78,22 +78,37 @@ bool ostore_is_on() {
  * the function.
  */
 bool store_obj(object_rep* obj_rep) {
-    /* 
-     * You should:
-     *      - include appropriate error checking of the parameter to the 
-     *        function and its fields and of return values from library 
-     *        and helper function calls
-     *      - only use file system operations specified in the rules in
-     *        README.txt
-     *      - use helper functions to create a type subdirectory and get 
-     *        the get the path of the file to write to
-     *      - write the valstr of the object representation to the file
-     *      - free any memory you were responsible for allocating
-     *      - return true if the string representation is successfully written 
-     *        to file and false otherwise, in which case no file should remain
-     */
-
+  /* 
+  * You should:
+  *      - include appropriate error checking of the parameter to the 
+  *        function and its fields and of return values from library 
+  *        and helper function calls
+  *      - only use file system operations specified in the rules in
+  *        README.txt
+  *      - use helper functions to create a type subdirectory and get 
+  *        the get the path of the file to write to
+  *      - write the valstr of the object representation to the file
+  *      - free any memory you were responsible for allocating
+  *      - return true if the string representation is successfully written 
+  *        to file and false otherwise, in which case no file should remain
+  */
+  if(!obj_rep || !obj_rep->valstr) {
+    errno = EINVAL;
     return false;
+  }
+  bool dir = _create_ostore_dir(obj_rep->type);
+  if(dir) {
+    char* path = _get_ofile_path(obj_rep);
+    if(!path) return false;
+    int fo = open(path, O_RDWR | O_CREAT | O_TRUNC, 0644);
+    if(!fo) return false;
+    int fw = write(fo, obj_rep->valstr, strlen(obj_rep->valstr));
+    if(!fw) return false;
+    if(close(fo) < 0) return false;
+    return true;
+  }
+  errno = ENOENT;
+  return false;
 }
 
 /* unlink_obj: implemented, do NOT change */

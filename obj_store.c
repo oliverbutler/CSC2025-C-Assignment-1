@@ -97,7 +97,7 @@ bool store_obj(object_rep* obj_rep) {
     return false;
   }
   bool dir = _create_ostore_dir(obj_rep->type);
-  if(dir) {
+  if(dir && ostore_is_on()) {
     char* path = _get_ofile_path(obj_rep);
     if(!path) return false;
     int fo = open(path, O_RDWR | O_CREAT | O_TRUNC, 0644);

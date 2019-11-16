@@ -259,8 +259,11 @@ String _concat(String self, String s) {
   strobj* sobjsrc = (strobj*) get_mentry(_object_map, s);
   String r = 0;
   if (sobj && sobjsrc) {
-    char* concat = calloc(1, sobj->len + sobjsrc->len + 1); // malloc not work because random and overwriting shit
-
+    char* concat = calloc(1, sobj->len + sobjsrc->len + 1);
+    if(!concat) {
+      errno = ENOMEM;
+      return NULL;
+    }
     if(!concat) {
       return NULL;
     }
@@ -348,7 +351,10 @@ String* _split(String self, String delim) {
 
   if(sobj && sobj_delim) {
     String* splits = malloc(sizeof(sobj));
-
+    if(!splits) {
+      errno = ENOMEM;
+      return NULL;
+    }
     char* string_val = _get_value(self, NULL);
 
     char* token;
